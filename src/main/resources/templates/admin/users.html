@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Users')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container dashboard-layout">
+    <div class="dashboard-sidebar">
+        <nav th:replace="~{fragments/layout :: admin-sidebar('users')}"></nav>
+    </div>
+    
+    <div class="dashboard-main">
+        <h1 style="font-size: 1.75rem; margin-bottom: 1.5rem;">User Management</h1>
+        
+        <div class="card table-responsive">
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                <input type="text" data-filter-table="usersTable" class="form-control" placeholder="Search users by name, email, or role..." style="max-width: 300px;">
+            </div>
+            <table class="table" id="usersTable">
+                <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Registered On</th></tr></thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${u.id}">ID</td>
+                        <td th:text="${u.fullName}">Name</td>
+                        <td th:text="${u.email}">Email</td>
+                        <td><span class="badge badge-active" th:text="${u.role.name()}">ROLE</span></td>
+                        <td th:text="${#temporals.format(u.createdAt, 'MMM dd, yyyy')}">Date</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body></html>

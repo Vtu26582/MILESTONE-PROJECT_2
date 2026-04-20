@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Applicants')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container dashboard-layout">
+    <div class="dashboard-sidebar">
+        <nav th:replace="~{fragments/layout :: employer-sidebar('dashboard')}"></nav>
+    </div>
+    
+    <div class="dashboard-main">
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/employer/dashboard}" style="color: var(--text-muted);"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+            <h1 style="font-size: 1.75rem; margin-top: 0.5rem;">Applicants for: <span th:text="${job.title}">Job</span></h1>
+        </div>
+        
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        
+        <div class="card table-responsive">
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                <input type="text" data-filter-table="applicantsTable" class="form-control" placeholder="Search applicants..." style="max-width: 300px;">
+            </div>
+            <table class="table" id="applicantsTable">
+                <thead><tr><th>Applicant Name</th><th>Email</th><th>Applied On</th><th>Resume</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                    <tr th:each="app : ${applications}">
+                        <td th:text="${app.user.fullName}">Name</td>
+                        <td><a th:href="'mailto:' + ${app.user.email}" th:text="${app.user.email}">Email</a></td>
+                        <td th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
+                        <td>
+                            <a th:if="${app.user.resumePath != null}" th:href="@{/uploads/{path}(path=${app.user.resumePath})}" target="_blank" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-pdf text-danger"></i> View</a>
+                            <span th:if="${app.user.resumePath == null}" class="text-muted">No resume</span>
+                        </td>
+                        <td><span th:class="'badge badge-' + ${#strings.toLowerCase(app.status.name())}" th:text="${app.status.name()}">STATUS</span></td>
+                        <td>
+                            <form th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post" style="display:flex; gap:0.5rem; align-items:center;">
+                                <input type="hidden" name="jobId" th:value="${job.id}">
+                                <select name="status" class="form-control" style="padding: 0.25rem 0.5rem; height: auto;" onchange="this.form.submit()">
+                                    <option th:each="st : ${T(com.jobportal.model.enums.ApplicationStatus).values()}" 
+                                            th:value="${st}" th:text="${st}" th:selected="${st == app.status}"></option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(applications)}">
+                        <td colspan="6" style="text-align: center; padding: 2rem;">No applications received yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body></html>

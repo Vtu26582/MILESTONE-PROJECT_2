@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Join Now')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="auth-wrapper">
+    <div class="auth-card" style="max-width: 480px;">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <img th:src="@{/images/logo.png}" alt="JobNest" style="height: 64px; margin-bottom: 12px;">
+        </div>
+        <h1>Join JobNest</h1>
+        <p style="margin-bottom: 24px;">Create your account to find jobs or post openings.</p>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <form th:action="@{/register}" th:object="${user}" method="post">
+            <div class="form-group">
+                <label for="fullName" class="form-label">Full name</label>
+                <input type="text" id="fullName" th:field="*{fullName}" class="form-control" required autofocus>
+                <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" style="color: #f87171; font-size: 12px; margin-top: 4px;"></div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: #f87171; font-size: 12px; margin-top: 4px;"></div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Password (6+ characters)</label>
+                <input type="password" id="password" th:field="*{password}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: #f87171; font-size: 12px; margin-top: 4px;"></div>
+            </div>
+            <div class="form-group">
+                <label for="role" class="form-label">I'm looking to</label>
+                <select id="role" name="role" class="form-control" required>
+                    <option value="STUDENT">Find a job</option>
+                    <option value="EMPLOYER">Hire talent</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">Agree & Join</button>
+        </form>
+        <div style="text-align: center; margin-top: 24px;">
+            <p>Already on JobNest? <a th:href="@{/login}">Sign in</a></p>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

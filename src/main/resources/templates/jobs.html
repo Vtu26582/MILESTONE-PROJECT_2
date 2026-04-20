@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Jobs')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container" style="padding: 24px 16px;">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    
+    <!-- Search -->
+    <div class="search-wrapper">
+        <h2 style="font-size: 20px; margin-bottom: 16px;">Search jobs</h2>
+        <form th:action="@{/jobs}" method="get" class="search-bar">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by title, skill, or company">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <div th:if="${keyword != null && !keyword.isEmpty()}" style="margin-top: 12px; font-size: 14px; color: rgba(0,0,0,.6);">
+            Showing results for "<strong th:text="${keyword}" style="color: rgba(0,0,0,.9);"></strong>"
+            <a th:href="@{/jobs}" style="margin-left: 8px;">Clear</a>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="font-size: 16px; font-weight: 600;">Recently Updated Jobs (<span th:text="${jobs.size()}">0</span>)</h2>
+    </div>
+    
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(jobs)}" class="card" style="text-align: center; padding: 48px;">
+        <i class="fa-solid fa-search" style="font-size: 48px; color: #e0dfdc; margin-bottom: 16px;"></i>
+        <h3 style="font-weight: 400; margin-bottom: 8px;">No jobs match your search</h3>
+        <p>Try different keywords or <a th:href="@{/jobs}">view all jobs</a>.</p>
+    </div>
+
+    <!-- Jobs List -->
+    <div th:if="${!#lists.isEmpty(jobs)}" class="card" style="overflow: hidden;">
+        <div class="job-list">
+            <a th:each="job : ${jobs}" th:href="@{/jobs/{id}(id=${job.id})}" class="job-item" style="text-decoration: none; color: inherit;">
+                <div class="job-icon">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+                <div class="job-info">
+                    <h3 th:text="${job.title}">Job Title</h3>
+                    <div class="job-company" th:text="${job.company}">Company</div>
+                    <div class="job-meta">
+                        <span th:text="${job.location}">Location</span>
+                        <span th:text="${job.category}">Category</span>
+                        <span th:text="${job.experienceLevel}">Level</span>
+                    </div>
+                    <div class="job-posted">
+                        <i class="fa-regular fa-clock"></i> Posted <span th:text="${#temporals.format(job.postedAt, 'MMM dd, yyyy')}"></span>
+                        &nbsp;
+                        <span class="badge badge-active" th:if="${job.status.name() == 'ACTIVE'}">Actively recruiting</span>
+                        <span class="badge badge-closed" th:if="${job.status.name() == 'CLOSED'}">Closed</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sign In')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="auth-wrapper">
+    <div class="auth-card">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <img th:src="@{/images/logo.png}" alt="JobNest" style="height: 64px; margin-bottom: 12px;">
+        </div>
+        <h1>Sign in</h1>
+        <p style="margin-bottom: 24px;">Stay connected with your career opportunities.</p>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username" class="form-label">Email</label>
+                <input type="email" id="username" name="username" class="form-control" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 8px; font-size: 16px;">Sign in</button>
+        </form>
+        <div style="text-align: center; margin-top: 24px;">
+            <p>New to JobNest? <a th:href="@{/register}">Join now</a></p>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Welcome')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <!-- HERO -->
+    <section class="landing-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Welcome to <span>your career nest</span></h1>
+                    <p style="font-size: 18px; margin-bottom: 8px;">Find your next opportunity or hire the best talent — all in one place.</p>
+                    
+                    <!-- Not logged in -->
+                    <div sec:authorize="!isAuthenticated()" class="landing-actions">
+                        <div class="action-row">
+                            <a th:href="@{/jobs}" class="btn btn-primary btn-lg" style="flex: 1;">
+                                <i class="fa-solid fa-search"></i> Find a job
+                            </a>
+                        </div>
+                        <div class="action-row">
+                            <a th:href="@{/register}" class="btn btn-outline btn-lg" style="flex: 1;">
+                                <i class="fa-solid fa-user-plus"></i> Join now
+                            </a>
+                            <a th:href="@{/login}" class="btn btn-white btn-lg" style="flex: 1;">
+                                Sign in
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Logged in -->
+                    <div sec:authorize="isAuthenticated()" class="landing-actions">
+                        <div class="action-row">
+                            <a th:href="@{/jobs}" class="btn btn-primary btn-lg" style="flex:1;">
+                                <i class="fa-solid fa-search"></i> Browse Jobs
+                            </a>
+                        </div>
+                        <div sec:authorize="hasRole('STUDENT')" class="action-row">
+                            <a th:href="@{/student/dashboard}" class="btn btn-outline btn-lg" style="flex:1;">My Dashboard</a>
+                        </div>
+                        <div sec:authorize="hasRole('EMPLOYER')" class="action-row">
+                            <a th:href="@{/employer/dashboard}" class="btn btn-outline btn-lg" style="flex:1;">Employer Dashboard</a>
+                        </div>
+                        <div sec:authorize="hasRole('ADMIN')" class="action-row">
+                            <a th:href="@{/admin/dashboard}" class="btn btn-outline btn-lg" style="flex:1;">Admin Panel</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-img">
+                    <img th:src="@{/images/logo.png}" alt="JobNest">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- VALUE PROPS -->
+    <section class="landing-section" style="border-bottom: 1px solid #2a2a2a;">
+        <div class="container">
+            <h2>What you can do with JobNest</h2>
+            <div class="value-grid">
+                <div class="value-card">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    <h3>Search Jobs</h3>
+                    <p>Explore open positions from top employers across industries and locations.</p>
+                    <a th:href="@{/jobs}" class="btn btn-outline" style="margin-top: 16px;">Find jobs</a>
+                </div>
+                <div class="value-card">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <h3>Build Your Profile</h3>
+                    <p>Create your professional profile, upload your resume, and stand out to employers.</p>
+                    <a th:href="@{/register}" class="btn btn-outline" style="margin-top: 16px;">Get started</a>
+                </div>
+                <div class="value-card">
+                    <i class="fa-solid fa-building"></i>
+                    <h3>Post & Hire</h3>
+                    <p>Employers: post jobs, review applicants, and shortlist candidates — all in one place.</p>
+                    <a th:href="@{/register}" class="btn btn-outline" style="margin-top: 16px;">Post a job</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FEATURED JOBS -->
+    <section class="landing-section">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="text-align: left; margin-bottom: 0;">Featured Jobs</h2>
+                <a th:href="@{/jobs}" class="btn btn-outline btn-sm">View all <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="card" style="overflow: hidden;">
+                <div class="job-list">
+                    <a th:each="job : ${jobs}" th:href="@{/jobs/{id}(id=${job.id})}" class="job-item" style="text-decoration: none; color: inherit;">
+                        <div class="job-icon">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+                        <div class="job-info">
+                            <h3 th:text="${job.title}">Job Title</h3>
+                            <div class="job-company" th:text="${job.company}">Company</div>
+                            <div class="job-meta">
+                                <span th:text="${job.location}">Location</span>
+                                <span th:text="${job.experienceLevel}">Level</span>
+                                <span th:if="${job.salaryMin != null}" th:text="'$' + ${#numbers.formatDecimal(job.salaryMin, 0, 'COMMA', 0, 'POINT')} + ' - $' + ${#numbers.formatDecimal(job.salaryMax, 0, 'COMMA', 0, 'POINT')}">Salary</span>
+                            </div>
+                            <div class="job-posted">Posted <span th:text="${#temporals.format(job.postedAt, 'MMM dd, yyyy')}">Date</span></div>
+                        </div>
+                    </a>
+                </div>
+                <div th:if="${#lists.isEmpty(jobs)}" style="padding: 48px; text-align: center;">
+                    <i class="fa-solid fa-briefcase" style="font-size: 48px; color: #2a2a2a; margin-bottom: 16px;"></i>
+                    <h3 style="font-weight: 400; color: #a8a29e;">No jobs posted yet</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

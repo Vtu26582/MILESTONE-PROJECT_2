@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="auth-wrapper">
+    <div class="auth-card" style="text-align: center;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 4rem; color: var(--error-color); margin-bottom: 1.5rem;"></i>
+        <h1 class="auth-title" style="margin-bottom: 0.5rem; color: var(--error-color);">Oops! Something went wrong</h1>
+        
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">We're sorry, but an unexpected error occurred.</p>
+        
+        <div th:if="${errorMessage}" class="alert alert-error" style="text-align: left; margin-bottom: 2rem;">
+            <strong>Error Details:</strong> <span th:text="${errorMessage}"></span>
+        </div>
+        
+        <a th:href="@{/}" class="btn btn-primary btn-lg" style="width: 100%;">Return to Home</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body></html>

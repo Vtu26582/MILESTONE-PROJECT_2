@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container dashboard-layout">
+    <div><nav th:replace="~{fragments/layout :: admin-sidebar('dashboard')}"></nav></div>
+    <div>
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="card-body">
+                <h1 style="font-size: 24px; margin-bottom: 4px;">Platform Analytics</h1>
+                <p>Overview of all activity on JobPortal.</p>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-info"><h3>Total users</h3><div class="value" th:text="${userCount}">0</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: #057642;"><i class="fa-solid fa-briefcase"></i></div>
+                <div class="stat-info"><h3>Active jobs</h3><div class="value" th:text="${jobCount}">0</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: #b24020;"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="stat-info"><h3>Applications</h3><div class="value" th:text="${applicationCount}">0</div></div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body></html>

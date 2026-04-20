@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Employer Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container dashboard-layout">
+    <div><nav th:replace="~{fragments/layout :: employer-sidebar('dashboard')}"></nav></div>
+    <div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="card-body" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-size: 24px; margin-bottom: 4px;">Employer Dashboard</h1>
+                    <p>Manage your job postings and review applicants.</p>
+                </div>
+                <a th:href="@{/employer/jobs/new}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Post a job</a>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+                <div class="stat-info"><h3>Jobs posted</h3><div class="value" th:text="${jobCount}">0</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: #0a66c2;"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-info"><h3>Total applicants</h3><div class="value" th:text="${applicationCount}">0</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color: #057642;"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="stat-info"><h3>Active jobs</h3><div class="value" th:text="${jobs.?[status.name() == 'ACTIVE'].size()}">0</div></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 style="font-size: 16px; margin: 0;">Your job listings</h2></div>
+            <div class="table-responsive" style="box-shadow: none; border-radius: 0;">
+                <table class="table">
+                    <thead><tr><th>Title</th><th>Status</th><th>Posted</th><th>Deadline</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        <tr th:each="job : ${jobs}">
+                            <td><a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.title}" style="font-weight: 600;">Title</a></td>
+                            <td><span th:class="'badge badge-' + ${#strings.toLowerCase(job.status.name())}" th:text="${job.status.name()}">STATUS</span></td>
+                            <td th:text="${#temporals.format(job.postedAt, 'MMM dd, yyyy')}">Date</td>
+                            <td>
+                                <span th:if="${job.deadline != null}" th:text="${#temporals.format(job.deadline, 'MMM dd, yyyy')}"></span>
+                                <span th:if="${job.deadline == null}">—</span>
+                            </td>
+                            <td style="display: flex; gap: 4px;">
+                                <a th:href="@{/employer/jobs/{id}/applicants(id=${job.id})}" class="btn btn-outline btn-sm">Applicants</a>
+                                <a th:href="@{/employer/jobs/{id}/edit(id=${job.id})}" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></a>
+                                <form th:action="@{/employer/jobs/{id}/delete(id=${job.id})}" method="post" style="display:inline;" onsubmit="return confirm('Delete this job?');">
+                                    <button type="submit" class="btn btn-outline btn-sm" style="color: #cc1016; border-color: #cc1016;"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(jobs)}">
+                            <td colspan="5" style="text-align: center; padding: 32px; color: rgba(0,0,0,.4);">No jobs posted. <a th:href="@{/employer/jobs/new}">Post one now</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body></html>

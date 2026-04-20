@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title + ' | JobNest'}">JobNest</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <!-- Core JS -->
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+
+<header th:fragment="navbar" class="navbar">
+    <div class="container nav-container">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo.png}" alt="JobNest"> JobNest
+        </a>
+        
+        <nav class="nav-links">
+            <a th:href="@{/jobs}" class="nav-link">
+                <i class="fa-solid fa-compass"></i>
+                Jobs
+            </a>
+            
+            <!-- Not authenticated -->
+            <th:block sec:authorize="!isAuthenticated()">
+                <a th:href="@{/register}" class="btn btn-outline" style="margin-left: 8px;">Join now</a>
+                <a th:href="@{/login}" class="btn btn-primary" style="margin-left: 4px;">Sign in</a>
+            </th:block>
+            
+            <!-- Authenticated User -->
+            <th:block sec:authorize="isAuthenticated()">
+                <th:block sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/dashboard}" class="nav-link">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Admin
+                    </a>
+                </th:block>
+                <th:block sec:authorize="hasRole('EMPLOYER')">
+                    <a th:href="@{/employer/dashboard}" class="nav-link">
+                        <i class="fa-solid fa-building"></i>
+                        Dashboard
+                    </a>
+                </th:block>
+                <th:block sec:authorize="hasRole('STUDENT')">
+                    <a th:href="@{/student/dashboard}" class="nav-link">
+                        <i class="fa-solid fa-user"></i>
+                        My Jobs
+                    </a>
+                </th:block>
+                
+                <form th:action="@{/logout}" method="post" style="display:inline; margin-left: 4px;">
+                    <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+                </form>
+            </th:block>
+        </nav>
+    </div>
+</header>
+
+<!-- Alert messages component -->
+<div th:fragment="alerts" class="container" style="margin-top: 16px;">
+    <div th:if="${param.error}" class="alert alert-error">
+        <i class="fa-solid fa-circle-exclamation"></i> Invalid email or password.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i> You have been signed out.
+    </div>
+    <div th:if="${param.registered}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i> Account created! Please sign in.
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${errorMessage}">Error</span>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i> <span th:text="${successMessage}">Success</span>
+    </div>
+</div>
+
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <p>&copy; 2026 JobNest &middot; All rights reserved &middot; Built with Spring Boot</p>
+    </div>
+</footer>
+
+<!-- Sidebar Fragments -->
+<nav th:fragment="student-sidebar(activeSection)" class="sidebar-nav">
+    <a th:href="@{/student/dashboard}" class="sidebar-link" th:classappend="${activeSection == 'dashboard' ? 'active' : ''}">
+        <i class="fa-solid fa-chart-pie"></i> Overview
+    </a>
+    <a th:href="@{/student/applications}" class="sidebar-link" th:classappend="${activeSection == 'applications' ? 'active' : ''}">
+        <i class="fa-solid fa-file-lines"></i> My Applications
+    </a>
+    <a th:href="@{/student/profile}" class="sidebar-link" th:classappend="${activeSection == 'profile' ? 'active' : ''}">
+        <i class="fa-solid fa-user"></i> Profile & Resume
+    </a>
+    <a th:href="@{/jobs}" class="sidebar-link">
+        <i class="fa-solid fa-compass"></i> Find Jobs
+    </a>
+</nav>
+
+<nav th:fragment="employer-sidebar(activeSection)" class="sidebar-nav">
+    <a th:href="@{/employer/dashboard}" class="sidebar-link" th:classappend="${activeSection == 'dashboard' ? 'active' : ''}">
+        <i class="fa-solid fa-chart-pie"></i> Overview
+    </a>
+    <a th:href="@{/employer/jobs/new}" class="sidebar-link" th:classappend="${activeSection == 'post-job' ? 'active' : ''}">
+        <i class="fa-solid fa-plus"></i> Post a Job
+    </a>
+</nav>
+
+<nav th:fragment="admin-sidebar(activeSection)" class="sidebar-nav">
+    <a th:href="@{/admin/dashboard}" class="sidebar-link" th:classappend="${activeSection == 'dashboard' ? 'active' : ''}">
+        <i class="fa-solid fa-chart-pie"></i> Analytics
+    </a>
+    <a th:href="@{/admin/users}" class="sidebar-link" th:classappend="${activeSection == 'users' ? 'active' : ''}">
+        <i class="fa-solid fa-users"></i> Users
+    </a>
+    <a th:href="@{/jobs}" class="sidebar-link">
+        <i class="fa-solid fa-briefcase"></i> All Jobs
+    </a>
+</nav>
+
+</body>
+</html>

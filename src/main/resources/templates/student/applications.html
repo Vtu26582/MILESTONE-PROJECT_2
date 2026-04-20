@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Applications')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container dashboard-layout">
+    <div class="dashboard-sidebar">
+        <nav th:replace="~{fragments/layout :: student-sidebar('applications')}"></nav>
+    </div>
+    
+    <div class="dashboard-main">
+        <h1 style="font-size: 1.75rem; margin-bottom: 1.5rem;">My Applications</h1>
+        
+        <div class="card table-responsive">
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                <input type="text" data-filter-table="applicationsTable" class="form-control" placeholder="Search applications..." style="max-width: 300px;">
+            </div>
+            <table class="table" id="applicationsTable">
+                <thead><tr><th>Job Title</th><th>Company</th><th>Applied On</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr th:each="app : ${applications}">
+                        <td th:text="${app.job.title}">Job</td>
+                        <td th:text="${app.job.company}">Company</td>
+                        <td th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
+                        <td><span th:class="'badge badge-' + ${#strings.toLowerCase(app.status.name())}" th:text="${app.status.name()}">STATUS</span></td>
+                        <td><a th:href="@{/jobs/{id}(id=${app.job.id})}" class="btn btn-outline btn-sm">View Job</a></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(applications)}">
+                        <td colspan="5" style="text-align: center; padding: 2rem;">No applications.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body></html>
