@@ -47,6 +47,10 @@
                         <i class="fa-solid fa-building"></i>
                         Dashboard
                     </a>
+                    <a th:href="@{/employer/jobs/new}" class="nav-link">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        Post Job
+                    </a>
                 </th:block>
                 <th:block sec:authorize="hasRole('STUDENT')">
                     <a th:href="@{/student/dashboard}" class="nav-link">

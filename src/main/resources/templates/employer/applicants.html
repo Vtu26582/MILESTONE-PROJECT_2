@@ -22,29 +22,37 @@
                 <input type="text" data-filter-table="applicantsTable" class="form-control" placeholder="Search applicants..." style="max-width: 300px;">
             </div>
             <table class="table" id="applicantsTable">
-                <thead><tr><th>Applicant Name</th><th>Email</th><th>Applied On</th><th>Resume</th><th>Status</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Applicant Name</th><th>Email</th><th>Applied On</th><th>AI Fit Score</th><th>Resume</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
                     <tr th:each="app : ${applications}">
                         <td th:text="${app.user.fullName}">Name</td>
                         <td><a th:href="'mailto:' + ${app.user.email}" th:text="${app.user.email}">Email</a></td>
                         <td th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
                         <td>
+                            <span style="background-color: rgba(212, 168, 83, 0.2); color: var(--primary-color); padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid var(--primary-color);" 
+                                  th:text="${app.agiFitScore != null ? app.agiFitScore + '%' : 'N/A'}">85%</span>
+                        </td>
+                        <td>
                             <a th:if="${app.user.resumePath != null}" th:href="@{/uploads/{path}(path=${app.user.resumePath})}" target="_blank" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-pdf text-danger"></i> View</a>
                             <span th:if="${app.user.resumePath == null}" class="text-muted">No resume</span>
                         </td>
                         <td><span th:class="'badge badge-' + ${#strings.toLowerCase(app.status.name())}" th:text="${app.status.name()}">STATUS</span></td>
-                        <td>
-                            <form th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post" style="display:flex; gap:0.5rem; align-items:center;">
+                        <td style="display: flex; gap: 8px;">
+                            <form th:if="${app.status.name() == 'PENDING'}" th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post">
                                 <input type="hidden" name="jobId" th:value="${job.id}">
-                                <select name="status" class="form-control" style="padding: 0.25rem 0.5rem; height: auto;" onchange="this.form.submit()">
-                                    <option th:each="st : ${T(com.jobportal.model.enums.ApplicationStatus).values()}" 
-                                            th:value="${st}" th:text="${st}" th:selected="${st == app.status}"></option>
-                                </select>
+                                <input type="hidden" name="status" value="ACCEPTED">
+                                <button type="submit" style="background-color: #0f9d58; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500;">Accept</button>
                             </form>
+                            <form th:if="${app.status.name() == 'PENDING'}" th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post">
+                                <input type="hidden" name="jobId" th:value="${job.id}">
+                                <input type="hidden" name="status" value="REJECTED">
+                                <button type="submit" style="background-color: #d23f31; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500;">Reject</button>
+                            </form>
+                            <span th:if="${app.status.name() != 'PENDING'}" style="color: #666; font-style: italic;">Processed via AGI</span>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(applications)}">
-                        <td colspan="6" style="text-align: center; padding: 2rem;">No applications received yet.</td>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">No applications received yet.</td>
                     </tr>
                 </tbody>
             </table>

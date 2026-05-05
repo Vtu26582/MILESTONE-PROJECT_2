@@ -16,10 +16,12 @@ import java.util.Optional;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final AgiService agiService;
 
     @Autowired
-    public ApplicationService(ApplicationRepository applicationRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, AgiService agiService) {
         this.applicationRepository = applicationRepository;
+        this.agiService = agiService;
     }
 
     @Transactional
@@ -34,6 +36,10 @@ public class ApplicationService {
         application.setJob(job);
         application.setCoverLetter(coverLetter);
         application.setStatus(ApplicationStatus.PENDING);
+        
+        // Calculate AI Fit Score
+        double fitScore = agiService.calculateFitScore(user.getSkills(), job.getSkillsRequired());
+        application.setAgiFitScore(fitScore);
         
         return applicationRepository.save(application);
     }

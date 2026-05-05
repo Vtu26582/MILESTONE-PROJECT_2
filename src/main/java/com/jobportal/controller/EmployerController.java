@@ -8,6 +8,7 @@ import com.jobportal.security.CustomUserDetails;
 import com.jobportal.service.ApplicationService;
 import com.jobportal.service.JobService;
 import com.jobportal.service.UserService;
+import com.jobportal.service.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,12 +27,14 @@ public class EmployerController {
     private final JobService jobService;
     private final UserService userService;
     private final ApplicationService applicationService;
+    private final EmailService emailService;
 
     @Autowired
-    public EmployerController(JobService jobService, UserService userService, ApplicationService applicationService) {
+    public EmployerController(JobService jobService, UserService userService, ApplicationService applicationService, EmailService emailService) {
         this.jobService = jobService;
         this.userService = userService;
         this.applicationService = applicationService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/dashboard")
@@ -144,6 +147,17 @@ public class EmployerController {
                                          @RequestParam Long jobId) {
         User employer = userService.findByEmail(userDetails.getUsername());
         applicationService.updateApplicationStatus(appId, status, employer.getId());
+        
+        // Fetch application to send email
+        Application app = applicationService.findById(appId);
+        
+        // Trigger Automated Email via Mock Logger
+        String message = status.name().equals("ACCEPTED") 
+            ? "Congratulations " + app.getUser().getFullName() + "! The company '" + app.getJob().getCompany() + "' has ACCEPTED your application for the '" + app.getJob().getTitle() + "' role." 
+            : "Dear " + app.getUser().getFullName() + ", we regret to inform you that the company '" + app.getJob().getCompany() + "' has REJECTED your application for the '" + app.getJob().getTitle() + "' role.";
+            
+        emailService.sendSimpleMessage(app.getUser().getEmail(), "JobNest Employer Update", message);
+        
         return "redirect:/employer/jobs/" + jobId + "/applicants?statusUpdated";
     }
 }

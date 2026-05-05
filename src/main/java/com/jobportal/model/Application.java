@@ -32,6 +32,9 @@ public class Application {
     @Column(columnDefinition = "TEXT")
     private String coverLetter;
 
+    @Column(name = "agi_fit_score")
+    private Double agiFitScore;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime appliedAt;
@@ -82,6 +85,14 @@ public class Application {
 
     public void setCoverLetter(String coverLetter) {
         this.coverLetter = coverLetter;
+    }
+
+    public Double getAgiFitScore() {
+        return agiFitScore;
+    }
+
+    public void setAgiFitScore(Double agiFitScore) {
+        this.agiFitScore = agiFitScore;
     }
 
     public LocalDateTime getAppliedAt() {

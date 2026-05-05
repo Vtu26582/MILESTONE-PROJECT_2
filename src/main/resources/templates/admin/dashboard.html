@@ -27,6 +27,56 @@
                 <div class="stat-info"><h3>Applications</h3><div class="value" th:text="${applicationCount}">0</div></div>
             </div>
         </div>
+        
+        <div class="card" style="margin-top: 24px;">
+            <div class="card-body">
+                <h2 style="font-size: 20px; margin-bottom: 16px;">Application Review Queue (AGI Powered)</h2>
+                <div th:if="${param.success}" style="background-color: #e6f4ea; color: #137333; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                    Success: Application status updated and automated email dispatched!
+                </div>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+                            <th style="padding: 12px;">Candidate</th>
+                            <th style="padding: 12px;">Job Role</th>
+                            <th style="padding: 12px;">AI Fit Score</th>
+                            <th style="padding: 12px;">Current Status</th>
+                            <th style="padding: 12px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="app : ${applications}" style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px;">
+                                <strong th:text="${app.user.fullName}">Name</strong><br>
+                                <small th:text="${app.user.email}" style="color: #666;"></small>
+                            </td>
+                            <td style="padding: 12px;" th:text="${app.job.title}">Job</td>
+                            <td style="padding: 12px;">
+                                <span style="background-color: rgba(212, 168, 83, 0.2); color: var(--primary-color); padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid var(--primary-color);" 
+                                      th:text="${app.agiFitScore != null ? app.agiFitScore + '%' : 'N/A'}">85%</span>
+                            </td>
+                            <td style="padding: 12px;">
+                                <span th:class="'badge ' + (${app.status.name() == 'ACCEPTED'} ? 'badge-success' : (${app.status.name() == 'REJECTED'} ? 'badge-danger' : 'badge-warning'))" th:text="${app.status}">Status</span>
+                            </td>
+                            <td style="padding: 12px; display: flex; gap: 8px;">
+                                <form th:if="${app.status.name() == 'PENDING'}" th:action="@{/admin/applications/{id}/update-status(id=${app.id})}" method="post">
+                                    <input type="hidden" name="status" value="ACCEPTED" />
+                                    <button type="submit" style="background-color: #0f9d58; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500;">Accept</button>
+                                </form>
+                                <form th:if="${app.status.name() == 'PENDING'}" th:action="@{/admin/applications/{id}/update-status(id=${app.id})}" method="post">
+                                    <input type="hidden" name="status" value="REJECTED" />
+                                    <button type="submit" style="background-color: #d23f31; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500;">Reject</button>
+                                </form>
+                                <span th:if="${app.status.name() != 'PENDING'}" style="color: #666; font-style: italic;">Processed via AGI</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(applications)}">
+                            <td colspan="5" style="padding: 24px; text-align: center; color: #666;">No applications pending review.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </main>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
